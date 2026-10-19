@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Para minha Goianinha ❤</title>
+  <meta name="description" content="Uma vela, um isqueiro e um campo de flores feitos de palavras de amor.">
+  <meta name="theme-color" content="#000000">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🕯️</text></svg>">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,400;1,500&family=Dancing+Script:wght@700&family=Great+Vibes&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Cena: vela, chama, flores (tudo feito de palavras) -->
+  <canvas id="cena" aria-hidden="true"></canvas>
+
+  <!-- Mensagem que aparece no meio do jardim -->
+  <main class="mensagem" id="mensagem" aria-hidden="true">
+    <h1 class="mensagem__titulo">Te amo minha Goianinha,</h1>
+    <p class="mensagem__texto" id="mensagem-texto">desde o dia que te conheci sabia que você seria especial para mim, meu amor por você floresce cada vez mais juntamente com este campo de flores</p>
+
+    <!-- Contador: juntos há X dias -->
+    <div class="contador" id="contador">
+      <span class="contador__rotulo">juntos há</span>
+      <span class="contador__numero"><span id="contador-dias">0</span> <small id="contador-unidade">dias</small></span>
+      <span class="contador__desde" id="contador-desde"></span>
+      <span class="contador__festa" id="contador-festa" hidden></span>
+    </div>
+
+    <button class="link-suave" id="ler-carta" type="button" hidden>ler a carta ✉</button>
+  </main>
+
+  <!-- A carta que a vela escreve ao derreter -->
+  <section class="carta" id="carta" aria-hidden="true">
+    <div class="carta__rolagem" id="carta-rolagem">
+      <div id="carta-texto"></div>
+      <button class="link-suave" id="voltar-frase" type="button" hidden>❤ voltar à frase</button>
+    </div>
+  </section>
+
+  <!-- Botão do microfone: ela diz "eu também te amo" e a chama cresce -->
+  <button class="ouvir" id="ouvir" type="button" hidden>
+    <span id="ouvir-texto">Diga em voz alta: “eu também te amo”</span>
+    <small id="ouvir-dica">ou segura a vela</small>
+  </button>
+
+  <p class="dica" id="dica"></p>
+
+  <!-- O isqueiro (cursor) fica numa camada por cima de tudo -->
+  <canvas id="cursor" aria-hidden="true"></canvas>
+
+  <noscript>
+    <p class="sem-js">Ative o JavaScript para acender a vela ❤</p>
+  </noscript>
+
+  <script src="script.js"></script>
+</body>
+</html>

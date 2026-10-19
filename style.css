@@ -1,0 +1,433 @@
+/* =========================================================
+   Para minha Goianinha ❤
+   ========================================================= */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #000;
+}
+
+body {
+  color: #fbeee2;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: none;          /* no celular, arrastar move o isqueiro em vez de rolar a página */
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* com JavaScript ligado, o cursor vira o isqueiro */
+html.js body {
+  cursor: none;
+}
+
+#cena {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* o isqueiro: uma telinha do tamanho dele que só é deslocada (bem leve) */
+#cursor {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 5;
+  display: block;
+  pointer-events: none;
+  will-change: transform;
+}
+
+/* ---------------- Mensagem ---------------- */
+
+.mensagem {
+  position: fixed;
+  z-index: 2;
+  left: 50%;
+  top: 40%;
+  width: min(600px, 88vw);
+  text-align: center;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 1.8s ease, visibility 0s linear 1.8s;
+}
+
+.mensagem.visivel {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 1.8s ease;
+}
+
+/* sombra suave atrás do texto, para ler bem no meio das flores */
+.mensagem::before {
+  content: '';
+  position: absolute;
+  inset: -22% -14%;
+  z-index: -1;
+  background: radial-gradient(closest-side,
+      rgba(12, 4, 10, 0.8),
+      rgba(12, 4, 10, 0.52) 55%,
+      rgba(12, 4, 10, 0) 100%);
+}
+
+.mensagem__titulo {
+  font-family: 'Great Vibes', 'Dancing Script', cursive;
+  font-weight: 400;
+  font-size: clamp(2.6rem, 5.4vw, 4.8rem);
+  line-height: 1.15;
+  padding: 0 0.15em;            /* não corta as pontas das letras cursivas */
+  background: linear-gradient(100deg, #ffd6e4 0%, #ff8fb3 35%, #ffd98a 68%, #ffc4d6 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 0 14px rgba(255, 120, 160, 0.45));
+  opacity: 0;
+  transform: translateY(14px) scale(0.96);
+  transition: opacity 2s ease, transform 2.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.mensagem.visivel .mensagem__titulo {
+  opacity: 1;
+  transform: none;
+}
+
+.mensagem__texto {
+  margin-top: 0.55em;
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(1.15rem, 1.9vw, 1.65rem);
+  line-height: 1.55;
+  color: #fbeee2;
+  text-shadow: 0 0 14px rgba(255, 170, 120, 0.35), 0 2px 6px rgba(0, 0, 0, 0.85);
+}
+
+/* cada palavra da frase aparece uma depois da outra */
+.mensagem__texto .palavra {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 1.1s ease, transform 1.1s ease;
+}
+
+.mensagem.visivel .palavra {
+  opacity: 1;
+  transform: none;
+}
+
+/* ---------------- Contador ---------------- */
+
+.contador {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 1em;
+  font-family: 'Quicksand', 'Trebuchet MS', sans-serif;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 1.4s ease 3.6s, transform 1.4s ease 3.6s;   /* aparece depois da frase */
+}
+
+.mensagem.visivel .contador {
+  opacity: 1;
+  transform: none;
+}
+
+.contador__rotulo {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: rgba(255, 214, 190, 0.72);
+}
+
+.contador__numero {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(2.3rem, 4vw, 3.3rem);
+  line-height: 1.05;
+  font-variant-numeric: lining-nums;
+  background: linear-gradient(100deg, #ffd6e4 0%, #ff8fb3 40%, #ffd98a 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 0 10px rgba(255, 130, 170, 0.35));
+}
+
+.contador__numero small {
+  font-size: 0.5em;
+}
+
+.contador__desde {
+  margin-top: 0.15em;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: rgba(255, 226, 200, 0.72);
+}
+
+/* no dia 16 de cada mês aparece uma frasezinha de parabéns */
+.contador__festa {
+  margin-top: 0.35em;
+  font-family: 'Great Vibes', 'Dancing Script', cursive;
+  font-size: 1.6rem;
+  color: #ffb3cf;
+  text-shadow: 0 0 12px rgba(255, 120, 170, 0.5);
+}
+
+/* quando a carta aparece, a frase dá lugar a ela */
+.mensagem.visivel.escondida {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 1.2s ease, visibility 0s linear 1.2s;
+}
+
+/* ---------------- Carta ---------------- */
+
+.carta {
+  position: fixed;
+  z-index: 2;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 1.4s ease, visibility 0s linear 1.4s;
+}
+
+.carta.visivel {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transition: opacity 1.4s ease 0.4s;
+}
+
+/* a mesma sombra suave da frase, para ler bem no meio das flores */
+.carta::before {
+  content: '';
+  position: absolute;
+  inset: -12% -10%;
+  z-index: -1;
+  background: radial-gradient(closest-side,
+      rgba(12, 4, 10, 0.86),
+      rgba(12, 4, 10, 0.62) 60%,
+      rgba(12, 4, 10, 0) 100%);
+}
+
+.carta__rolagem {
+  position: relative;
+  overflow-y: auto;
+  scrollbar-width: none;
+  touch-action: pan-y;
+  padding: 0.2em 0.6em 0.6em;
+}
+
+.carta__rolagem::-webkit-scrollbar {
+  display: none;
+}
+
+.carta__saudacao {
+  font-family: 'Great Vibes', 'Dancing Script', cursive;
+  font-size: clamp(1.9rem, 3.2vw, 2.6rem);
+  line-height: 1.2;
+  color: #ffb9d2;
+  margin-bottom: 0.25em;
+}
+
+.carta__paragrafo {
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(1.05rem, 1.55vw, 1.32rem);
+  line-height: 1.6;
+  color: #fbeee2;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.85);
+  margin: 0.45em 0;
+}
+
+.carta__assinatura {
+  font-family: 'Great Vibes', 'Dancing Script', cursive;
+  font-size: clamp(1.6rem, 2.6vw, 2.1rem);
+  color: #ffc4d6;
+  text-align: right;
+  margin-top: 0.3em;
+}
+
+/* cada palavra só aparece quando a faísca da vela chega nela */
+.carta .pc {
+  display: inline-block;
+  opacity: 0;
+  transition: opacity 0.7s ease;
+}
+
+.carta .pc.acesa {
+  opacity: 1;
+  animation: brasa 1.8s ease-out;
+}
+
+@keyframes brasa {
+  0% {
+    color: #fff3c4;
+    text-shadow: 0 0 14px rgba(255, 170, 70, 0.95), 0 0 4px rgba(255, 220, 150, 0.9);
+  }
+}
+
+/* ---------------- Botões ---------------- */
+
+.link-suave {
+  display: block;
+  margin: 0.9em auto 0;
+  padding: 0.4em 0.8em;
+  background: none;
+  border: none;
+  font-family: 'Quicksand', 'Trebuchet MS', sans-serif;
+  font-weight: 600;
+  font-size: 0.8rem;
+  letter-spacing: 0.15em;
+  color: rgba(255, 200, 220, 0.85);
+  cursor: pointer;
+  pointer-events: auto;
+  text-decoration: underline dotted rgba(255, 200, 220, 0.5);
+  text-underline-offset: 0.35em;
+}
+
+.link-suave[hidden] {
+  display: none;
+}
+
+.ouvir {
+  position: fixed;
+  z-index: 4;
+  left: 50%;
+  bottom: calc(18px + env(safe-area-inset-bottom, 0px));
+  transform: translateX(-50%) translateY(10px);
+  max-width: 92vw;
+  padding: 0.7em 1.4em;
+  border: 1px solid rgba(255, 180, 140, 0.4);
+  border-radius: 999px;
+  background: rgba(30, 10, 20, 0.78);
+  box-shadow: 0 0 18px rgba(255, 140, 90, 0.25);
+  font-family: 'Quicksand', 'Trebuchet MS', sans-serif;
+  font-weight: 600;
+  font-size: 0.92rem;
+  line-height: 1.3;
+  color: #ffe2c8;
+  text-align: center;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 1.2s ease, transform 1.2s ease, border-color 0.6s ease;
+}
+
+.ouvir[hidden] {
+  display: none;
+}
+
+.ouvir.visivel {
+  opacity: 1;
+  transform: translateX(-50%);
+  animation: chamar 2.6s ease-in-out infinite;
+}
+
+.ouvir small {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 600;
+  opacity: 0.65;
+}
+
+.ouvir.ouvindo {
+  border-color: rgba(255, 150, 195, 0.75);
+  cursor: default;
+}
+
+@keyframes chamar {
+  50% { box-shadow: 0 0 28px rgba(255, 140, 90, 0.5); }
+}
+
+/* ---------------- Dica ---------------- */
+
+.dica {
+  position: fixed;
+  z-index: 3;
+  left: 50%;
+  bottom: calc(26px + env(safe-area-inset-bottom, 0px));
+  transform: translateX(-50%);
+  max-width: 92vw;
+  font-family: 'Quicksand', 'Trebuchet MS', sans-serif;
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: 0.2em;
+  text-align: center;
+  white-space: nowrap;
+  color: rgba(255, 214, 170, 0.6);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 1.4s ease;
+}
+
+/* a dica só "respira" enquanto está à vista */
+.dica.visivel {
+  opacity: 1;
+  animation: respirar 3.2s ease-in-out infinite;
+}
+
+@keyframes respirar {
+  0%, 100% {
+    color: rgba(255, 214, 170, 0.5);
+    text-shadow: 0 0 0 rgba(255, 150, 60, 0);
+  }
+  50% {
+    color: rgba(255, 226, 192, 0.92);
+    text-shadow: 0 0 14px rgba(255, 150, 60, 0.55);
+  }
+}
+
+.sem-js {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 1.4rem;
+  color: #ffd6e4;
+}
+
+@media (max-width: 600px) {
+  .dica {
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+  }
+}
+
+/* celulares mais baixinhos: texto um pouco menor para caber céu, frase e vela */
+@media (max-height: 720px) and (orientation: portrait) {
+  .mensagem__titulo { font-size: 2.2rem; }
+  .mensagem__texto { font-size: 1.02rem; line-height: 1.45; }
+  .contador { margin-top: 0.7em; }
+  .contador__numero { font-size: 2rem; }
+  .carta__paragrafo { font-size: 1rem; line-height: 1.5; }
+}
+
+@media (max-width: 600px) {
+  .ouvir { font-size: 0.82rem; bottom: calc(10px + env(safe-area-inset-bottom, 0px)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dica.visivel {
+    animation: none;
+  }
+  .mensagem__texto .palavra {
+    transform: none;
+  }
+}
